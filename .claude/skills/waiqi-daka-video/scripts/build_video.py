@@ -198,7 +198,43 @@ def green_bg(glow=True):
         gl = gl.filter(ImageFilter.GaussianBlur(200)); im.paste(Image.new("RGB", (W, H), (22, 104, 80)), (0, 0), gl)
     return im
 
+def portrait_cover():
+    """笔记侠式封面：高清人物竖屏铺满 + 底部大标题（人物名: 金句）+ 右下角小 logo。
+    cover 字段：who（如 "Nike CEO"）、quote（金句，str 或 list）、frame_time、focus_x（人物水平中心，0-1）、
+    focus_y（0-1，默认 0.5）、crop_bottom（裁掉原片底部比例，默认 0.17，去掉台标/字幕条）、zoom（默认 1.0，>1 更特写）、cover_source（可选，高清原片路径，默认用 source_video）、
+    quote_size（默认 112）。"""
+    cv = CFG["cover"]; src_path = os.path.abspath(cv.get("cover_source") or SRC)
+    full = f"{OUT}/cov_hd.png"
+    run(["ffmpeg", "-y", "-ss", str(cv["frame_time"]), "-i", src_path, "-frames:v", "1", full])
+    fr = Image.open(full).convert("RGB")
+    fr = fr.crop((0, 0, fr.width, int(fr.height * (1 - cv.get("crop_bottom", 0.17)))))   # 裁掉原片底部的电视台字幕条/台标
+    z = cv.get("zoom", 1.0); ch = fr.height / z; cw = ch * W / H
+    cx = cv.get("focus_x", 0.5) * fr.width; cy = cv.get("focus_y", 0.5) * fr.height
+    x0 = min(max(cx - cw / 2, 0), fr.width - cw); y0 = min(max(cy - ch / 2, 0), fr.height - ch)
+    im = fr.crop((int(x0), int(y0), int(x0 + cw), int(y0 + ch))).resize((W, H), Image.LANCZOS)
+    im = im.filter(ImageFilter.UnsharpMask(radius=2, percent=60, threshold=2))
+    im = ImageEnhance.Contrast(im).enhance(1.06)
+    # 底部压暗渐变，托住标题
+    gh = 1000; g = Image.new("L", (1, gh)); g.putdata([int(235 * (i / gh) ** 1.6) for i in range(gh)])
+    im.paste(Image.new("RGB", (W, gh), (4, 20, 15)), (0, H - gh), g.resize((W, gh)))
+    d = ImageDraw.Draw(im)
+    who = cv.get("who", ""); q = cv["quote"]; q = [q] if isinstance(q, str) else q
+    fq = serif(cv.get("quote_size", 112), 900); fw = serif(cv.get("who_size", 84), 900)
+    lines = []
+    for part in q: lines += wrap(d, part, fq, 940)
+    step = int(cv.get("quote_size", 112) * 1.28)
+    bottom = H - 190; y = bottom - step * len(lines)
+    if who:
+        wy = y - 128
+        d.rectangle((60, wy + 12, 76, wy + 12 + 84), fill="#e60012")
+        d.text((100, wy), who + "：", font=fw, fill=GOLD, stroke_width=3, stroke_fill=(8, 26, 20))
+    for ln in lines:
+        d.text((60, y), ln, font=fq, fill=(255, 255, 255), stroke_width=5, stroke_fill=(8, 26, 20)); y += step
+    lg, m = logo_img(124, radius=22); im.paste(lg, (W - 124 - 52, H - 124 - 56), m)
+    return im
+
 def cover_img():
+    if "quote" in CFG["cover"]: return portrait_cover()
     cv = CFG["cover"]
     im = Image.new("RGB", (W, H), CREAM); d = ImageDraw.Draw(im)
     for x, y, r, c in [(930, 90, 280, "#e6edea"), (90, 1650, 320, "#ebeee8")]:
@@ -256,14 +292,15 @@ def pipe_video(frames, path, audio, dur):
     p.stdin.close(); err = p.stderr.read(); p.wait()
     if p.returncode: raise RuntimeError(err.decode()[-800:])
 
-def make_intro(path, cover):
-    D = 2.4; n = int(D * FPS); frames = []
+def make_intro(path, cover, hook=False):
+    D = 2.4; skip = 0.6 if hook else 0; n = int((D - skip) * FPS); frames = []
+    pre = Image.new("RGB", (W, H), CREAM) if hook else None
     for i in range(n):
-        t = i / FPS
+        t = i / FPS + skip
         if t < 0.6: fr = zoom_img(cover, 1 + 0.015 * t / 0.6)
         else:
             sc = brand_scene(t - 0.6, 0)
-            fr = Image.blend(zoom_img(cover, 1.015), sc, ease_io(clamp((t - 0.6) / 0.3))) if t < 0.9 else sc
+            fr = Image.blend(pre if hook else zoom_img(cover, 1.015), sc, ease_io(clamp((t - 0.6) / 0.3))) if t < 0.9 else sc
             if t > 2.2: fr = Image.blend(fr, Image.new("RGB", (W, H), CREAM), clamp((t - 2.2) / 0.2))
         frames.append(fr)
     sting = ["-f", "lavfi", "-t", "0.6", "-i", "anoisesrc=d=0.6:c=pink:a=0.6",
@@ -272,8 +309,8 @@ def make_intro(path, cover):
              "-f", "lavfi", "-t", "1.2", "-i", "aevalsrc='0.30*(sin(2*PI*1047*t)+0.45*sin(2*PI*2094*t))*exp(-3.5*t)':s=44100:d=1.2"]
     fc = ("[1:a]highpass=f=500,lowpass=f=6000,afade=t=in:d=0.35,afade=t=out:st=0.4:d=0.2,adelay=330|330[w];"
           "[2:a]adelay=700|700[h];[3:a]adelay=950|950[c1];[4:a]adelay=1130|1130[c2];"
-          "[w][h][c1][c2]amix=inputs=4:normalize=0,aformat=sample_rates=44100:channel_layouts=stereo,apad,atrim=0:2.4,afade=t=out:st=2.1:d=0.3[aout]")
-    pipe_video(frames, path, (sting, fc), D)
+          "[w][h][c1][c2]amix=inputs=4:normalize=0,aformat=sample_rates=44100:channel_layouts=stereo,apad,atrim=0:2.4,atrim=start={sk},asetpts=PTS-STARTPTS,afade=t=out:st={fs}:d=0.3[aout]".format(sk=skip, fs=2.1 - skip))
+    pipe_video(frames, path, (sting, fc), D - skip)
 
 def make_outro(path, narr_mp3):
     nd = dur_of(narr_mp3); D = round(nd + 0.5 + 0.3, 2); n = int(D * FPS); frames = []
@@ -328,7 +365,19 @@ def narr(name, items, tag, footer, gap=0.2, tail=0.3):
         segments.append(render(f"{name}_{k}", d, background(tag, footer), ("still", png), ovs, af, [["-i", a]]))
 
 cover = cover_img(); cover.save(f"{OUT}/cover.png")
-make_intro(f"{OUT}/intro_sting.mp4", cover); segments.append(f"{OUT}/intro_sting.mp4")
+if "--cover-only" in sys.argv:
+    _p = os.path.splitext(os.path.abspath(CFG.get("output", f"{WORK}/final.mp4")))[0] + "_cover.png"; cover.save(_p); print("cover:", _p); sys.exit(0)
+HK = CFG.get("hook")
+if HK:
+    rg = HK["range"]; a, b = rg["start"], rg["end"]; d = b - a; ovs = []
+    hp = f"{OUT}/hook_hl.png"; headline_png(hp, HK["headline"]); ovs.append((hp, WIN_Y, 0, d))
+    for j, sb in enumerate(rg["subs"]):
+        sp = f"{OUT}/hook_s{j}.png"; sub_png(sp, sb["en"], sb["zh"])
+        nxt = rg["subs"][j + 1]["s"] - a if j + 1 < len(rg["subs"]) else d
+        ovs.append((sp, SUB_Y, max(0, sb["s"] - a), min(d, sb["e"] - a + 0.15, nxt - 0.01)))
+    af = f"[1:a]asetpts=PTS-STARTPTS,afade=t=in:d=0.05,afade=t=out:st={d - 0.12:.3f}:d=0.12,aformat=sample_rates=44100:channel_layouts=stereo[aout]"
+    segments.append(render("hook", d, background(HK.get("tag", "这句话，值得听完"), CFG["intro"].get("footer", "")), ("video", a), ovs, af, []))
+make_intro(f"{OUT}/intro_sting.mp4", cover, bool(HK)); segments.append(f"{OUT}/intro_sting.mp4")
 
 I = CFG["intro"]
 narr("intro", I["lines"], I.get("tag", "今日拷问"), I.get("footer", ""))

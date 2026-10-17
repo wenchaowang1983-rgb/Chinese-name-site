@@ -1,0 +1,247 @@
+{
+ "work_dir": "/tmp/waiqi_nike",
+ "source_video": "/tmp/waiqi_nike/source.mp4",
+ "output": "/tmp/waiqi_nike/外企也打卡_成片.mp4",
+ "crop": "crop=1280:590:0:0",
+ "voice": "zh-CN-YunxiNeural",
+ "rate": "+15%",
+ "cover": {
+  "who": "Nike CEO",
+  "cover_source": "/tmp/waiqi_nike/source_hd.mp4",
+  "focus_x": 0.36,
+  "focus_y": 0.5,
+  "zoom": 1.0,
+  "quote": "我把个人邮箱，给了全体员工",
+  "frame_time": 240
+ },
+ "hook": {
+  "tag": "这句话，让我愣住了",
+  "headline": [
+   "每一封邮件",
+   "我都回了"
+  ],
+  "range": {
+   "start": 237.0,
+   "end": 239.95,
+   "subs": [
+    {
+     "s": 237.05,
+     "e": 239.9,
+     "en": "And I responded to every single one of them.",
+     "zh": "【希尔】而且，我每一封都回了。"
+    }
+   ]
+  }
+ },
+ "intro": {
+  "tag": "今日拷问",
+  "footer": "NBC《TODAY》专访耐克CEO · 2026.5.11 · 观点为受访者自述",
+  "lines": [
+   {
+    "id": "i1",
+    "text": "老板，到底该不该公私分明？",
+    "frame": 100,
+    "headline": [
+     "老板该不该",
+     "公私分明？"
+    ]
+   },
+   {
+    "id": "i2",
+    "text": "多数人的答案是：下班以后，别来找我。",
+    "frame": 72
+   },
+   {
+    "id": "i3",
+    "text": "可耐克的CEO，偏偏反着来。",
+    "frame": 240,
+    "headline": [
+     "耐克CEO",
+     "偏偏反着来"
+    ]
+   },
+   {
+    "id": "i4",
+    "text": "埃利奥特·希尔，在耐克干了32年，2020年退休。",
+    "frame": 228
+   },
+   {
+    "id": "i5",
+    "text": "2024年10月，他被请回来，接任CEO。",
+    "frame": 100
+   },
+   {
+    "id": "i6",
+    "text": "最近接受美国NBC采访，他说：上任时，我把个人邮箱，给了全体员工。",
+    "frame": 240,
+    "headline": [
+     "个人邮箱",
+     "给了全体员工"
+    ]
+   },
+   {
+    "id": "i7",
+    "text": "为什么这么做？听他自己说。",
+    "frame": 228
+   }
+  ]
+ },
+ "clips": [
+  {
+   "tag": "01   他说：每一封，我都回了",
+   "ranges": [
+    {
+     "start": 224.95,
+     "end": 242.5,
+     "subs": [
+      {
+       "s": 225.1,
+       "e": 228.85,
+       "en": "I read that when you started, you actually gave out your personal email address.",
+       "zh": "【主持人】我读到，你刚上任时，把个人邮箱给了员工。"
+      },
+      {
+       "s": 228.95,
+       "e": 229.45,
+       "en": "Yeah.",
+       "zh": "【希尔】是的。"
+      },
+      {
+       "s": 229.55,
+       "e": 230.8,
+       "en": "To all the employees.",
+       "zh": "【主持人】发给了全体员工。"
+      },
+      {
+       "s": 230.85,
+       "e": 236.6,
+       "en": "It was crazy how many emails I received, the text messages. It was humbling.",
+       "zh": "【希尔】收到的邮件和短信多得离谱，让我很感动。"
+      },
+      {
+       "s": 237.0,
+       "e": 239.95,
+       "en": "And I responded to every single one of them.",
+       "zh": "【希尔】而且，我每一封都回了。"
+      },
+      {
+       "s": 240.2,
+       "e": 242.4,
+       "en": "You're getting choked up talking about this place.",
+       "zh": "【主持人】一说起这家公司，你就哽咽了。"
+      }
+     ]
+    },
+    {
+     "start": 245.0,
+     "end": 250.95,
+     "subs": [
+      {
+       "s": 245.05,
+       "e": 248.9,
+       "en": "It's not a job. It's personal.",
+       "zh": "【希尔】这不只是一份工作，这是个人的事。"
+      },
+      {
+       "s": 249.0,
+       "e": 250.9,
+       "en": "I get that sense from you.",
+       "zh": "【主持人】我能感觉到。"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "02   他眼里的耐克：清理、重置",
+   "ranges": [
+    {
+     "start": 74.1,
+     "end": 79.5,
+     "subs": [
+      {
+       "s": 74.2,
+       "e": 79.4,
+       "en": "We're in a cleanup mode, a reset mode. We're setting this business up for the next 40 years.",
+       "zh": "【希尔】我们在清理、在重置，为未来40年打基础。"
+      }
+     ]
+    },
+    {
+     "start": 91.9,
+     "end": 96.1,
+     "subs": [
+      {
+       "s": 91.95,
+       "e": 96.0,
+       "en": "Where we make mistakes is when we forget who we're serving: consumers, athletes.",
+       "zh": "【希尔】我们出错，是因为忘了在服务谁：消费者、运动员。"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "03   他为什么回来",
+   "ranges": [
+    {
+     "start": 251.25,
+     "end": 255.1,
+     "subs": [
+      {
+       "s": 251.3,
+       "e": 253.7,
+       "en": "Is that why you came out of retirement to turn it around?",
+       "zh": "【主持人】所以你才退休复出来力挽狂澜？"
+      },
+      {
+       "s": 253.8,
+       "e": 255.05,
+       "en": "It's a place I care deeply about.",
+       "zh": "【希尔】这是我深深在乎的地方。"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "outro": {
+  "tag": "答案",
+  "footer": "采访原声版权属NBC · 观点为受访者自述",
+  "thanks": "感谢收看，我们下期再见。",
+  "thanks_label": "感谢收看",
+  "lines": [
+   {
+    "id": "o1",
+    "text": "他自己说，邮件和短信多得离谱，但每一封，他都回了。",
+    "frame": 240,
+    "headline": [
+     "每一封",
+     "都回了"
+    ]
+   },
+   {
+    "id": "o2",
+    "text": "公开邮箱，不是放弃边界，而是给员工一条，不被层层过滤的通道。",
+    "frame": 100
+   },
+   {
+    "id": "o3",
+    "text": "所以答案是：公私要分明，但领导要把门，留一条缝。",
+    "card": [
+     "公私要分明",
+     "但门要留一条缝"
+    ],
+    "card_sub": "公开的是倾听的入口，不是生活的边界"
+   },
+   {
+    "id": "o4",
+    "text": "好领导的魅力，不在头衔，而在那句：我愿意听你说。",
+    "card": [
+     "领导的魅力",
+     "是让人敢开口"
+    ]
+   }
+  ]
+ }
+}
