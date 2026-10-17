@@ -1,0 +1,250 @@
+{
+ "work_dir": "/tmp/waiqi_boulder",
+ "source_video": "/tmp/waiqi_boulder/source.mp4",
+ "output": "/tmp/waiqi_boulder/外企也打卡_成片.mp4",
+ "crop": "crop=1280:590:0:0,delogo=x=18:y=16:w=260:h=46",
+ "voice": "zh-CN-YunxiNeural",
+ "rate": "+15%",
+ "cover": {
+  "line1": "老板让你撒谎",
+  "red": "撒谎",
+  "line2": "你听不听？",
+  "frame_time": 140,
+  "crop_box": [
+   440,
+   0,
+   1199,
+   590
+  ]
+ },
+ "intro": {
+  "tag": "今日拷问",
+  "footer": "真实执法记录仪画面 · 美国科罗拉多州博尔德 · 2025.6.5",
+  "lines": [
+   {
+    "id": "i1",
+    "text": "外企打工人，迟早会碰上这一刻：",
+    "frame": 177,
+    "headline": [
+     "外企打工人",
+     "老板让你撒谎"
+    ]
+   },
+   {
+    "id": "i2",
+    "text": "老板犯了错，要你站出来，替他把话圆过去。",
+    "frame": 606,
+    "headline": [
+     "老板犯了错",
+     "要你替他圆"
+    ]
+   },
+   {
+    "id": "i3",
+    "text": "你是听老板的，跟着撒谎？还是忠于自己？",
+    "frame": 600,
+    "headline": [
+     "听老板的？",
+     "还是忠于自己？"
+    ]
+   },
+   {
+    "id": "i4",
+    "text": "美国一段真实的执法记录仪视频，给了一个很清楚的答案。",
+    "frame": 123
+   },
+   {
+    "id": "i5",
+    "text": "2025年6月，科罗拉多州。警察追捕银行劫匪，却把一个骑车的17岁高中生扑倒在地，戴上手铐。",
+    "frame": 140
+   },
+   {
+    "id": "i6",
+    "text": "很快，所有人都知道：抓错人了。接下来，长官和动手的警员，做了完全不同的选择。",
+    "frame": 587,
+    "headline": [
+     "长官 vs 警员",
+     "两种选择"
+    ]
+   }
+  ]
+ },
+ "clips": [
+  {
+   "tag": "01   动手的警员：把电话推给长官",
+   "ranges": [
+    {
+     "start": 460.1,
+     "end": 473.4,
+     "subs": [
+      {
+       "s": 460.26,
+       "e": 463.2,
+       "en": "He had his helmet on, we didn't know he was a 17-year-old kid, right?",
+       "zh": "【警员】他戴着头盔，我们不知道他才17岁，对吧？"
+      },
+      {
+       "s": 463.4,
+       "e": 466.2,
+       "en": "I understand your whole story, but seriously, dude.",
+       "zh": "【爸爸】你的说法我听懂了，但说真的，伙计——"
+      },
+      {
+       "s": 466.3,
+       "e": 470.72,
+       "en": "How many people on bikes are riding around on campus, and you tackle my son?",
+       "zh": "【爸爸】大学城里多少人在骑车，你偏偏扑倒我儿子？"
+      },
+      {
+       "s": 470.72,
+       "e": 473.4,
+       "en": "So you understand how wrong that was, right?",
+       "zh": "【爸爸】你明白这有多离谱，对吧？"
+      }
+     ]
+    },
+    {
+     "start": 481.25,
+     "end": 485.45,
+     "subs": [
+      {
+       "s": 481.25,
+       "e": 485.45,
+       "en": "I'm not able to provide all that information, sir. Officer Myers.",
+       "zh": "【警员】先生，这些信息我不能提供。我是Myers警员。"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "02   长官：“描述对得上，你没做错”",
+   "ranges": [
+    {
+     "start": 585.6,
+     "end": 600.5,
+     "subs": [
+      {
+       "s": 585.6,
+       "e": 588.3,
+       "en": "No, like, I'm more worried about the kid, right? I feel bad.",
+       "zh": "【警员】不，我更担心那孩子，我心里过意不去。"
+      },
+      {
+       "s": 588.8,
+       "e": 590.3,
+       "en": "Hey, you just had a bank robbery.",
+       "zh": "【长官】嘿，刚发生了银行抢劫。"
+      },
+      {
+       "s": 590.3,
+       "e": 594.7,
+       "en": "I know, I know... but still. I feel like sh**.",
+       "zh": "【警员】我知道，我知道……可我还是很难受。"
+      },
+      {
+       "s": 595.0,
+       "e": 600.5,
+       "en": "I have Bailey going to buy him a backpack, because I cut his backpack.",
+       "zh": "【警员】我让同事去给他买个书包，他的书包被我割坏了。"
+      }
+     ]
+    },
+    {
+     "start": 605.9,
+     "end": 608.85,
+     "subs": [
+      {
+       "s": 605.9,
+       "e": 608.85,
+       "en": "You had a bank robbery, matched the description, did what you did.",
+       "zh": "【长官】有抢劫案，描述对得上，你做了该做的。"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tag": "03   警员：当面认错，自掏腰包",
+   "ranges": [
+    {
+     "start": 639.2,
+     "end": 643.0,
+     "subs": [
+      {
+       "s": 639.2,
+       "e": 643.0,
+       "en": "I'm going to go try to buy you a backpack, because I cut your straps.",
+       "zh": "【警员】我去给你买个新书包，你的背带被我割断了。"
+      }
+     ]
+    },
+    {
+     "start": 647.65,
+     "end": 660.45,
+     "subs": [
+      {
+       "s": 647.65,
+       "e": 652.95,
+       "en": "Oh, I feel bad. If I'm not back in time, I'll figure something out.",
+       "zh": "【警员】真过意不去。我要是没及时回来，也会想办法。"
+      },
+      {
+       "s": 653.4,
+       "e": 657.0,
+       "en": "I'm really sorry, Galileo. I hope you can forgive me, man.",
+       "zh": "【警员】真的对不起，Galileo，希望你能原谅我。"
+      },
+      {
+       "s": 658.3,
+       "e": 660.45,
+       "en": "I'm sorry that we had to do that to you.",
+       "zh": "【警员】对不起，让你遭了这些罪。"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "outro": {
+  "tag": "答案",
+  "footer": "结果依据博尔德警局内部调查及公开报道",
+  "thanks": "感谢收看，我们下期再见。",
+  "thanks_label": "感谢收看",
+  "lines": [
+   {
+    "id": "o1",
+    "text": "结果呢？内部调查认定：明知抓错、还硬扣着人不放的长官，被停职；",
+    "frame": 603,
+    "headline": [
+     "长官：停职"
+    ]
+   },
+   {
+    "id": "o2",
+    "text": "当场认错、自掏腰包给孩子买书包的警员，被认定没有违规。",
+    "frame": 650,
+    "headline": [
+     "警员：无违规"
+    ]
+   },
+   {
+    "id": "o3",
+    "text": "所以答案很清楚：老板的错，不该由你的嘴来背。你可以忠于职责，但不必替任何人撒谎。",
+    "card": [
+     "老板的错",
+     "不该由你的嘴来背"
+    ],
+    "card_sub": "忠于职责，但不替任何人撒谎"
+   },
+   {
+    "id": "o4",
+    "text": "因为最后签字、出镜、被追责的，是你自己。",
+    "card": [
+     "签字、出镜、被追责的",
+     "是你自己"
+    ]
+   }
+  ]
+ }
+}

@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# waiqi-daka-video skill: 运行时下载的字体与令牌服务
+.claude/skills/waiqi-daka-video/fonts/
+.claude/skills/waiqi-daka-video/.bgutil/
