@@ -1,5 +1,5 @@
-"""外企也打卡 · 竖屏双语短视频生成器。用法: python3 build_video.py config.json
-读取 config.json（见 examples/boulder.json），输出 1080x1920 成片 + 封面图。"""
+"""外企也打卡 · 竖屏短视频生成器。用法: python3 build_video.py config.json
+读取 config.json（见 examples/boulder.json），输出 1080x1920 成片 + 封面图。版式：视频窗口占竖屏 54%，字幕只出中文。"""
 import os, sys, json, subprocess, re, math
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
@@ -11,12 +11,15 @@ SRC = os.path.abspath(CFG["source_video"])
 OUT = f"{WORK}/out"; os.makedirs(OUT, exist_ok=True)
 FD = os.environ.get("WAIQI_FONTS") or (f"{SKILL}/fonts")
 W, H = 1080, 1920
-WIN_Y, WIN_H = 560, 498
+WIN_Y, WIN_H = 236, 1040          # 视频窗口：占竖屏 54%（≥一半）
 FPS = 30
 GREEN = (6, 73, 55)
 CREAM = (246, 243, 236)
-CROP_RAW = CFG.get("crop", "crop=iw:iw/2.17:0:0")   # 取画面上方 2.17:1 的区域，可附加 delogo
-CROP = CROP_RAW + ",scale=1080:498"
+CROP_RAW = CFG.get("crop") or "null"   # 可选预裁剪：去掉原片烧录字幕/水印，如 crop=1280:590:0:0,delogo=x=18:y=16:w=260:h=46
+def vf(focus=None):
+    """把原片裁成窗口比例(1080x1040)再缩放；focus=水平取景中心(0左~1右)，默认 config.focus_x 或 0.5"""
+    f = CFG.get("focus_x", 0.5) if focus is None else focus
+    return f"{CROP_RAW},crop='min(iw,ih*{W}/{WIN_H})':ih:'(iw-ow)*{f}':0,scale={W}:{WIN_H}"
 
 IVORY = (246, 243, 236)
 INK = (15, 31, 26)
@@ -98,34 +101,35 @@ def logo_img(size, radius=None):
 def background(tag, footer):
     im = Image.new("RGB", (W, H), CREAM)
     d = ImageDraw.Draw(im)
-    lg, m = logo_img(92); im.paste(lg, (48, 56), m)
-    lt = lettering(660, GREEN); im.paste(lt, ((W - lt.width) // 2, 118), lt)
-    tracked(d, W // 2, 300, "打卡外企如喝茶", nb(30, 500), (110, 122, 116), sp=14)
-    d.rectangle((0, 385, W, 413), fill="#e60012")
+    lg, m = logo_img(64); im.paste(lg, (44, 40), m)
+    lt = lettering(340, GREEN); im.paste(lt, ((W - lt.width) // 2, 40), lt)
+    tracked(d, W // 2, 122, "打卡外企如喝茶", nb(22, 500), (110, 122, 116), sp=10)
+    d.rectangle((0, 164, W, 176), fill="#e60012")
     if tag:
-        tracked(d, W // 2, 440, tag, nb(38, 700), GREEN, sp=4)
-    d.rectangle((0, WIN_Y - 8, W, WIN_Y + WIN_H + 8), fill=GREEN)
+        tracked(d, W // 2, 188, tag, nb(30, 700), GREEN, sp=3)
+    d.rectangle((0, WIN_Y - 6, W, WIN_Y + WIN_H + 6), fill=GREEN)
     if footer:
-        tracked(d, W // 2, 1800, footer, nb(26, 400), (140, 146, 142), sp=3)
+        tracked(d, W // 2, 1852, footer, nb(24, 400), (140, 146, 142), sp=3)
     return im
 
 def sub_png(path, en, zh):
-    im = Image.new("RGBA", (W, 640), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    """只出中文字幕（英文默认不显示；config 里 show_english=true 才显示）；说话人用小标签"""
+    im = Image.new("RGBA", (W, 420), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     y = 0
     mm = re.match(r"【(.+?)】(.*)", zh)
     if mm:
         label, zh = mm.group(1), mm.group(2)
-        fl = nb(32, 700); tw = sum(d.textlength(c, font=fl) for c in label) + 6 * (len(label) - 1)
-        d.rounded_rectangle((W // 2 - tw / 2 - 26, 0, W // 2 + tw / 2 + 26, 52), radius=26, fill=GREEN)
-        tracked(d, W // 2, 4, label, fl, IVORY, sp=6); y = 78
-    if en:
-        fe = inter(54, 500)
+        fl = nb(28, 700); tw = sum(d.textlength(c, font=fl) for c in label) + 5 * (len(label) - 1)
+        d.rounded_rectangle((W // 2 - tw / 2 - 22, 0, W // 2 + tw / 2 + 22, 44), radius=22, fill=GREEN)
+        tracked(d, W // 2, 3, label, fl, IVORY, sp=5); y = 64
+    if en and CFG.get("show_english"):
+        fe = inter(40, 500)
         for ln in wrap(d, en, fe, 960):
-            ctext(d, y, ln, fe, (92, 106, 99)); y += 72
-        y += 12
-    fz = nb(72 if en else 76, 700); zh = zh.rstrip("。")
+            ctext(d, y, ln, fe, (92, 106, 99)); y += 54
+        y += 8
+    fz = nb(62, 700); zh = zh.rstrip("。")
     for ln in wrap(d, zh, fz, 960):
-        ctext(d, y, ln, fz, INK); y += 100
+        ctext(d, y, ln, fz, INK); y += 84
     im.save(path)
 
 def headline_png(path, lines):
@@ -133,14 +137,14 @@ def headline_png(path, lines):
     ph = 330
     g = Image.new("L", (1, ph)); g.putdata([int(225 * (i / ph) ** 1.4) for i in range(ph)])
     im.paste(Image.new("RGBA", (W, ph), GREEN + (255,)), (0, WIN_H - ph), g.resize((W, ph)))
-    d = ImageDraw.Draw(im); fh = serif(76, 900); step = 96
+    d = ImageDraw.Draw(im); fh = serif(72, 900); step = 92
     y = WIN_H - 36 - step * len(lines)
     for i, ln in enumerate(lines):
         ctext(d, y, ln, fh, IVORY if i == 0 or len(lines) == 1 else GOLD); y += step
     im.save(path)
 
-def frame_png(t, path):
-    run(["ffmpeg", "-y", "-ss", str(t), "-i", SRC, "-frames:v", "1", "-vf", CROP, path])
+def frame_png(t, path, focus=None):
+    run(["ffmpeg", "-y", "-ss", str(t), "-i", SRC, "-frames:v", "1", "-vf", vf(focus), path])
 
 def card_png(path, lines, sub=None):
     im = Image.new("RGB", (W, WIN_H), GREEN); d = ImageDraw.Draw(im)
@@ -156,12 +160,12 @@ def render(name, dur, bg, window, overlays, audio_filter, audio_inputs):
     inputs = ["-loop", "1", "-framerate", str(FPS), "-t", f"{dur}", "-i", bgp]
     if window[0] == "video":
         inputs += ["-ss", f"{window[1]}", "-t", f"{dur}", "-i", SRC]
-        wf = f"[1:v]{CROP},fps={FPS},setpts=PTS-STARTPTS[win]"
+        wf = f"[1:v]{vf(window[2] if len(window) > 2 else None)},fps={FPS},setpts=PTS-STARTPTS[win]"
     else:
         inputs += ["-loop", "1", "-framerate", str(FPS), "-t", f"{dur}", "-i", window[1]]
         n = int(dur * FPS) + 2
-        wf = (f"[1:v]scale=2160:996,zoompan=z='min(1+0.10*on/{n},1.10)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
-              f":d=1:s=1080x498:fps={FPS}[win]")
+        wf = (f"[1:v]scale={2 * W}:{2 * WIN_H},zoompan=z='min(1+0.10*on/{n},1.10)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+              f":d=1:s={W}x{WIN_H}:fps={FPS}[win]")
     k = 2
     for p in overlays:
         inputs += ["-loop", "1", "-framerate", str(FPS), "-t", f"{dur}", "-i", p[0]]
@@ -328,7 +332,7 @@ def make_outro(path, narr_mp3):
 
 # ---------------------------------------------------------------- 配置驱动的时间线
 segments = []
-SUB_Y = WIN_Y + WIN_H + 70
+SUB_Y = WIN_Y + WIN_H + 80
 VOICE = CFG.get("voice", "zh-CN-YunxiNeural"); RATE = CFG.get("rate", "+15%")
 
 def tts(key, text, rate=None):
@@ -345,7 +349,7 @@ def narr(name, items, tag, footer, gap=0.2, tail=0.3):
         k = it["id"]; a = tts(k, it["text"])
         d = dur_of(a) + gap + (tail if i == len(items) - 1 else 0)
         png = f"{OUT}/{name}_{k}_win.png"
-        if "frame" in it: frame_png(it["frame"], png)
+        if "frame" in it: frame_png(it["frame"], png, it.get("focus"))
         else: card_png(png, [(x, "#fff") for x in it["card"]], it.get("card_sub"))
         ovs = []
         if "frame" in it and it.get("headline"):
@@ -372,11 +376,11 @@ if HK:
     rg = HK["range"]; a, b = rg["start"], rg["end"]; d = b - a; ovs = []
     hp = f"{OUT}/hook_hl.png"; headline_png(hp, HK["headline"]); ovs.append((hp, WIN_Y, 0, d))
     for j, sb in enumerate(rg["subs"]):
-        sp = f"{OUT}/hook_s{j}.png"; sub_png(sp, sb["en"], sb["zh"])
+        sp = f"{OUT}/hook_s{j}.png"; sub_png(sp, sb.get("en"), sb["zh"])
         nxt = rg["subs"][j + 1]["s"] - a if j + 1 < len(rg["subs"]) else d
         ovs.append((sp, SUB_Y, max(0, sb["s"] - a), min(d, sb["e"] - a + 0.15, nxt - 0.01)))
     af = f"[1:a]asetpts=PTS-STARTPTS,afade=t=in:d=0.05,afade=t=out:st={d - 0.12:.3f}:d=0.12,aformat=sample_rates=44100:channel_layouts=stereo[aout]"
-    segments.append(render("hook", d, background(HK.get("tag", "这句话，值得听完"), CFG["intro"].get("footer", "")), ("video", a), ovs, af, []))
+    segments.append(render("hook", d, background(HK.get("tag", "这句话，值得听完"), CFG["intro"].get("footer", "")), ("video", a, rg.get("focus")), ovs, af, []))
 make_intro(f"{OUT}/intro_sting.mp4", cover, bool(HK)); segments.append(f"{OUT}/intro_sting.mp4")
 
 I = CFG["intro"]
@@ -387,11 +391,11 @@ for grp in CFG["clips"]:
     for rg in grp["ranges"]:
         a, b = rg["start"], rg["end"]; d = b - a; ovs = []; subs = rg["subs"]
         for j, sb in enumerate(subs):
-            sp = f"{OUT}/clip{ci}_s{j}.png"; sub_png(sp, sb["en"], sb["zh"])
+            sp = f"{OUT}/clip{ci}_s{j}.png"; sub_png(sp, sb.get("en"), sb["zh"])
             nxt = subs[j + 1]["s"] - a if j + 1 < len(subs) else d
             ovs.append((sp, SUB_Y, max(0, sb["s"] - a), min(d, sb["e"] - a + 0.15, nxt - 0.01)))
         af = f"[1:a]asetpts=PTS-STARTPTS,afade=t=in:d=0.08,afade=t=out:st={d - 0.12:.3f}:d=0.12,aformat=sample_rates=44100:channel_layouts=stereo[aout]"
-        segments.append(render(f"clip{ci}", d, background(grp["tag"], grp.get("footer", "原声片段 · 中英字幕")), ("video", a), ovs, af, []))
+        segments.append(render(f"clip{ci}", d, background(grp["tag"], grp.get("footer", "原声片段 · 中文字幕")), ("video", a, rg.get("focus")), ovs, af, []))
         ci += 1
 
 O = CFG["outro"]
