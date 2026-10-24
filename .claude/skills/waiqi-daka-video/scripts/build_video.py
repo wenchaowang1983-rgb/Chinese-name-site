@@ -101,7 +101,6 @@ def logo_img(size, radius=None):
 def background(tag, footer):
     im = Image.new("RGB", (W, H), CREAM)
     d = ImageDraw.Draw(im)
-    lg, m = logo_img(64); im.paste(lg, (44, 40), m)
     lt = lettering(340, GREEN); im.paste(lt, ((W - lt.width) // 2, 40), lt)
     tracked(d, W // 2, 122, "打卡外企如喝茶", nb(22, 500), (110, 122, 116), sp=10)
     d.rectangle((0, 164, W, 176), fill="#e60012")
