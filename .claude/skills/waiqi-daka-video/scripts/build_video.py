@@ -237,8 +237,10 @@ def portrait_cover():
     return im
 
 def cover_img():
-    if "quote" in CFG["cover"]: return portrait_cover()
+    """默认＝人物版（portrait）。只有显式写 cover.style="banner"，或只写了 line1（旧配置）时，才用「大标题+红条」版。"""
     cv = CFG["cover"]
+    style = cv.get("style") or ("banner" if ("line1" in cv and "quote" not in cv) else "portrait")
+    if style == "portrait": return portrait_cover()
     im = Image.new("RGB", (W, H), CREAM); d = ImageDraw.Draw(im)
     for x, y, r, c in [(930, 90, 280, "#e6edea"), (90, 1650, 320, "#ebeee8")]:
         bl = Image.new("L", (W, H), 0); ImageDraw.Draw(bl).ellipse((x - r, y - r, x + r, y + r), fill=255)
