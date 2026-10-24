@@ -288,7 +288,7 @@ def brand_scene(t, t_in, show_thanks=False):
     return im
 
 def pipe_video(frames, path, audio, dur):
-    p = subprocess.Popen(["ffmpeg", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+    p = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-nostats", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                           *audio[0], "-filter_complex", audio[1], "-map", "0:v", "-map", "[aout]", "-t", f"{dur}",
                           "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-pix_fmt", "yuv420p",
                           "-c:a", "aac", "-b:a", "160k", "-ar", "44100", "-ac", "2", path],
