@@ -6,10 +6,16 @@ SKILL="$(cd "$(dirname "$0")/.." && pwd)"
 if [ -d "$SKILL/.bgutil/server/build" ] && ! (echo > /dev/tcp/127.0.0.1/4416) 2>/dev/null; then
   (cd "$SKILL/.bgutil/server" && nohup node build/main.js >/tmp/bgutil.log 2>&1 &); sleep 4
 fi
+# 登录态（可选）：在你自己的电脑上运行时最简单，读取本机 Chrome 的登录状态，数据不出本机：
+#   COOKIES_FROM_BROWSER=chrome bash fetch_video.sh <链接> <目录>
+# 或用导出的 cookies.txt：COOKIES_FILE=/path/cookies.txt bash fetch_video.sh ...
+AUTH=()
+[ -n "$COOKIES_FROM_BROWSER" ] && AUTH=(--cookies-from-browser "$COOKIES_FROM_BROWSER")
+[ -n "$COOKIES_FILE" ] && AUTH=(--cookies "$COOKIES_FILE")
 FMT='bv*[height<=720]+ba/b[height<=720]/b'
 for C in mweb web_embedded tv_simply default; do
   echo "尝试客户端: $C"
-  yt-dlp --no-warnings --js-runtimes node --extractor-args "youtube:player_client=$C" -f "$FMT" --merge-output-format mp4 \
+  yt-dlp "${AUTH[@]}" --no-warnings --js-runtimes node --extractor-args "youtube:player_client=$C" -f "$FMT" --merge-output-format mp4 \
          --write-auto-subs --sub-langs "en.*" --sub-format vtt -o "source.%(ext)s" "$URL" && [ -s source.mp4 ] && { echo OK; exit 0; }
   sleep 5
 done
